@@ -1,0 +1,407 @@
+{% extends 'base.html' %}
+
+{% block title %}FaceSense AI - Emotion Psychology & FACS Micro-Expressions Guide{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Page Header -->
+  <div class="row align-items-center mb-5">
+    <div class="col-lg-8">
+      <span class="badge badge-soft-primary mb-2"><i class="bi bi-book me-1"></i> Scientific Compendium</span>
+      <h1 class="display-6 fw-bold text-white mb-2">The Science of Facial Expressions &amp; Micro-Affects</h1>
+      <p class="text-muted lead mb-0">
+        Explore Dr. Paul Ekman's Facial Action Coding System (FACS), Action Units (AUs), evolutionary neurobiology, and benchmark datasets that power computer vision emotion models.
+      </p>
+    </div>
+    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+      <a href="{{ url_for('detector') }}" class="btn btn-primary-gradient">
+        <i class="bi bi-play-circle-fill me-1"></i> Test in Live Sandbox
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       FOUNDATIONAL OVERVIEW: FACS & AFFECTIVE COMPUTING
+       ======================================================================== -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-8">
+      <div class="glass-card p-4 h-100">
+        <h3 class="h4 fw-bold text-white mb-3"><i class="bi bi-lightbulb-fill text-warning me-2"></i> From Darwin to Deep Convolutional Networks</h3>
+        <p class="text-muted">
+          In 1872, Charles Darwin published <em>The Expression of the Emotions in Man and Animals</em>, postulating that human facial expressions are universal, biologically rooted, and evolved as communicative survival mechanisms. A century later, psychologists Dr. Paul Ekman and Wallace Friesen codified this hypothesis into the <strong>Facial Action Coding System (FACS)</strong>.
+        </p>
+        <p class="text-muted">
+          FACS breaks down human facial behavior into 46 anatomically independent <strong>Action Units (AUs)</strong>. Every smile, grimace, gasp, or frown is an orchestration of these minute muscle contractions. In modern computer vision, deep learning models learn high-dimensional spatial filters that map directly to these Action Units without requiring manual feature engineering.
+        </p>
+        
+        <div class="row g-3 mt-2">
+          <div class="col-sm-6">
+            <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-25">
+              <h6 class="text-white fw-bold mb-1"><i class="bi bi-stopwatch text-info me-1"></i> Macro-Expressions</h6>
+              <p class="text-muted small mb-0">Last between 0.5 to 4 seconds, visible across normal interactions, often voluntarily modulated by social display rules.</p>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-25">
+              <h6 class="text-white fw-bold mb-1"><i class="bi bi-lightning text-danger me-1"></i> Micro-Expressions</h6>
+              <p class="text-muted small mb-0">Flash involuntarily in 1/25th to 1/5th of a second (< 500ms), revealing repressed or subconscious affective states.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="glass-card p-3 h-100 text-center d-flex flex-column justify-content-between">
+        <div class="realistic-img-container mb-3" style="aspect-ratio: 4/3;">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80" alt="Facial muscle expression portrait">
+        </div>
+        <div>
+          <h5 class="text-white fw-bold mb-1">Russell's Circumplex Model</h5>
+          <p class="text-muted small mb-2">
+            Emotions are mapped along two orthogonal dimensions: <strong>Valence</strong> (pleasure vs displeasure) and <strong>Arousal</strong> (activation vs deactivation).
+          </p>
+          <span class="badge badge-soft-success">2D Affective Coordinates</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       DEEP DIVE: THE 7 UNIVERSAL EMOTIONS & MUSCLE PROFILES
+       ======================================================================== -->
+  <div class="mb-5">
+    <div class="text-center mb-4">
+      <span class="badge badge-soft-warning mb-2">Detailed Biomechanical Breakdown</span>
+      <h2 class="display-6 fw-bold text-white">Anatomy of the 7 Primary Emotions</h2>
+      <p class="text-muted mx-auto" style="max-width: 650px;">
+        Discover the exact muscle contractions, FACS Action Units, and visual markers that our neural network inspects.
+      </p>
+    </div>
+
+    <!-- Emotion 1: Happy -->
+    <div class="glass-card p-4 mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80" alt="Genuine Duchenne Smile Happiness">
+            <div class="img-overlay-caption">
+              <span class="badge bg-warning text-dark fw-bold">😊 Happiness / Joy</span>
+              <span class="text-white small">Valence: +0.81 | Arousal: +0.51</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">1. Happiness (The Duchenne Marker)</h3>
+            <span class="badge badge-soft-warning">Positive Valence &bull; High Harmony</span>
+          </div>
+          <p class="text-muted small">
+            True happiness is biologically distinguished by the <em>Duchenne smile</em>. Unlike polite or social smiles which only engage the mouth, genuine amusement triggers the involuntary outer bands of the eye sockets.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-warning me-1"></i> Key Action Units:</strong>
+              <ul class="text-muted ps-3 mb-0">
+                <li><strong class="text-light">AU6 (Cheek Raiser):</strong> Orbicularis oculi muscle pulls cheeks upwards, creating crow's feet wrinkles.</li>
+                <li><strong class="text-light">AU12 (Lip Corner Puller):</strong> Zygomaticus major muscle pulls lip corners obliquely up toward the temples.</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-success me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">High gradient variance around nasolabial folds, upward parabolic curvature of mouth boundary, and eyelid squinting.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion 2: Sadness -->
+    <div class="glass-card p-4 mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80" alt="Sad contemplative human face">
+            <div class="img-overlay-caption">
+              <span class="badge bg-primary fw-bold">😢 Sadness</span>
+              <span class="text-white small">Valence: -0.63 | Arousal: -0.27</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">2. Sadness &amp; Grief</h3>
+            <span class="badge badge-soft-primary">Negative Valence &bull; Low Arousal</span>
+          </div>
+          <p class="text-muted small">
+            Sadness is one of the hardest expressions to feign convincingly because contracting the inner corners of the eyebrows independently (AU1) without the outer corners is biologically rare under conscious control.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-primary me-1"></i> Key Action Units:</strong>
+              <ul class="text-muted ps-3 mb-0">
+                <li><strong class="text-light">AU1 (Inner Brow Raiser):</strong> Frontalis pars medialis muscle draws inner brows upward into a triangle.</li>
+                <li><strong class="text-light">AU4 (Brow Lowerer):</strong> Corrugator supercilii knits brows slightly inward.</li>
+                <li><strong class="text-light">AU15 (Lip Corner Depressor):</strong> Depressor anguli oris pulls mouth corners downward.</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-info me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">Downward mouth arc, lowered eyelid lids, horizontal crease across the forehead center.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion 3: Surprise -->
+    <div class="glass-card p-4 mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80" alt="Surprised expression with wide eyes">
+            <div class="img-overlay-caption">
+              <span class="badge bg-pink text-white fw-bold" style="background: var(--color-surprise);">😲 Surprise</span>
+              <span class="text-white small">Valence: +0.40 | Arousal: +0.67</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">3. Surprise &amp; Astonishment</h3>
+            <span class="badge badge-soft-warning">Neutral/Positive &bull; High Arousal</span>
+          </div>
+          <p class="text-muted small">
+            Surprise is the briefest of all emotional states. Its evolutionary utility is to quickly maximize sensory intake by widening the visual field (dilating pupils, raising brows) and preparing the lungs for sudden flight or fight.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-pink me-1" style="color: var(--color-surprise);"></i> Key Action Units:</strong>
+              <ul class="text-muted ps-3 mb-0">
+                <li><strong class="text-light">AU1 + AU2 (Inner & Outer Brow Raiser):</strong> Arches brows high across the forehead.</li>
+                <li><strong class="text-light">AU5 (Upper Lid Raiser):</strong> Widens palpebral fissure, exposing sclera above iris.</li>
+                <li><strong class="text-light">AU26/27 (Jaw Drop / Mouth Stretch):</strong> Pterygoid relaxation drops the mandible.</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-success me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">High circular aspect ratio in mouth region, expanded white sclera around pupils, raised eyebrow distance from eye center.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion 4: Anger -->
+    <div class="glass-card p-4 mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80" alt="Angry intense facial gaze">
+            <div class="img-overlay-caption">
+              <span class="badge bg-danger fw-bold">😠 Anger</span>
+              <span class="text-white small">Valence: -0.51 | Arousal: +0.59</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">4. Anger &amp; Rage</h3>
+            <span class="badge badge-soft-primary" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.3);">Negative Valence &bull; High Arousal</span>
+          </div>
+          <p class="text-muted small">
+            Anger signals an offensive or confrontational stance. Blood rushes to the hands and face, facial features contract into a menacing, focused tunnel vision aimed at the adversary.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-danger me-1"></i> Key Action Units:</strong>
+              <ul class="text-muted ps-3 mb-0">
+                <li><strong class="text-light">AU4 (Brow Lowerer):</strong> Corrugator supercilii pulls eyebrows downward and together into a steep V-shape.</li>
+                <li><strong class="text-light">AU7 (Lid Tightener):</strong> Narrowed lower eyelids create a penetrating gaze.</li>
+                <li><strong class="text-light">AU23/24 (Lip Tightener / Pressor):</strong> Orbicularis oris compresses the lips into a firm red margin.</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-info me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">Vertical glabella furrows between the eyes, reduced mouth thickness, sharp downward eyebrow slant.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion 5: Fear -->
+    <div class="glass-card p-4 mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80" alt="Fearful startled portrait">
+            <div class="img-overlay-caption">
+              <span class="badge fw-bold text-white" style="background: var(--color-fear);">😨 Fear</span>
+              <span class="text-white small">Valence: -0.64 | Arousal: +0.60</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">5. Fear &amp; Terror</h3>
+            <span class="badge badge-soft-primary" style="background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border-color: rgba(139, 92, 246, 0.3);">High Threat Response</span>
+          </div>
+          <p class="text-muted small">
+            Fear primes the cardiovascular system for defensive reaction. Unlike surprise, the eyebrows in fear are pulled both up and horizontally together into a flattened tension, with lips stretched sideways.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-purple me-1" style="color: var(--color-fear);"></i> Key Action Units:</strong>
+              <ul class="text-muted ps-3 mb-0">
+                <li><strong class="text-light">AU1 + AU2 + AU4:</strong> Brow is elevated and furrowed simultaneously.</li>
+                <li><strong class="text-light">AU5 (Upper Lid Raiser):</strong> Wide eyes expose maximum perimeter sclera.</li>
+                <li><strong class="text-light">AU20 (Lip Stretcher):</strong> Risorius muscle retracts the mouth horizontally toward the ears.</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-info me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">Stretched horizontal mouth perimeter, widened eye sclera, forehead tension creases.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion 6: Disgust -->
+    <div class="glass-card p-4 mb-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80" alt="Disgust expression wrinkled nose">
+            <div class="img-overlay-caption">
+              <span class="badge bg-success fw-bold">🤢 Disgust</span>
+              <span class="text-white small">Valence: -0.60 | Arousal: +0.35</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">6. Disgust &amp; Revulsion</h3>
+            <span class="badge badge-soft-success">Aversive Sensory Rejection</span>
+          </div>
+          <p class="text-muted small">
+            Evolved to protect against toxins, spoiled pathogens, and noxious odors. The physiological response closes off the nasal cavity and expels matter from the oral chamber.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-success me-1"></i> Key Action Units:</strong>
+              <ul class="text-muted ps-3 mb-0">
+                <li><strong class="text-light">AU9 (Nose Wrinkler):</strong> Levator labii superioris alaeque nasi draws the bridge of the nose into horizontal skin folds.</li>
+                <li><strong class="text-light">AU10 (Upper Lip Raiser):</strong> Elevates the central upper lip, exposing upper teeth.</li>
+              </ul>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-info me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">High edge gradient frequency across the nasal bridge, asymmetric upper lip elevation, narrowed eye apertures.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion 7: Neutral -->
+    <div class="glass-card p-4">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-4">
+          <div class="realistic-img-container">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80" alt="Neutral balanced calm face portrait">
+            <div class="img-overlay-caption">
+              <span class="badge bg-secondary fw-bold">😐 Neutral</span>
+              <span class="text-white small">Valence: 0.00 | Arousal: 0.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h3 class="h4 fw-bold text-white mb-0">7. Neutral Baseline</h3>
+            <span class="badge badge-soft-primary">Homeostatic Equilibrium</span>
+          </div>
+          <p class="text-muted small">
+            The absence of active emotional valence or arousal. Serves as the critical baseline against which differential motion vectors and facial landmark displacements are quantified.
+          </p>
+          <div class="row g-3 small">
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-activity text-secondary me-1"></i> Key Action Units:</strong>
+              <p class="text-muted mb-0">No active Action Units. Facial tonicity remains in relaxed bilateral symmetry with unpuckered lips and level eye gaze.</p>
+            </div>
+            <div class="col-sm-6">
+              <strong class="text-white d-block mb-1"><i class="bi bi-shield-check text-info me-1"></i> CNN Feature Keys:</strong>
+              <p class="text-muted mb-0">Balanced horizontal landmark distances, lack of localized high-frequency edge clusters around mouth or forehead.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       BENCHMARK DATASETS COMPARISON TABLE
+       ======================================================================== -->
+  <div class="glass-card p-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="h4 fw-bold text-white mb-1"><i class="bi bi-database me-2 text-primary"></i> Benchmark Datasets in Affective Computing</h3>
+        <p class="text-muted small mb-0">Standard benchmark corpuses used to train and evaluate state-of-the-art FER architectures.</p>
+      </div>
+      <a href="{{ url_for('model_guide') }}" class="btn btn-outline-glow btn-sm">Training Guide &rarr;</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0" style="font-size: 0.9rem;">
+        <thead class="border-bottom border-secondary border-opacity-25 text-white">
+          <tr>
+            <th>Dataset Name</th>
+            <th>Year</th>
+            <th>Sample Count</th>
+            <th>Resolution</th>
+            <th>Environment</th>
+            <th>Standard Accuracy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-white fw-bold"><i class="bi bi-folder-check text-primary me-2"></i> FER-2013</td>
+            <td>2013</td>
+            <td>35,887 images</td>
+            <td>48 &times; 48 (Grayscale)</td>
+            <td>In-the-wild web crawl</td>
+            <td><span class="badge bg-success">73.2% - 75.8%</span></td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold"><i class="bi bi-folder-check text-success me-2"></i> AffectNet</td>
+            <td>2017</td>
+            <td>400,000+ images</td>
+            <td>Variable (224 &times; 224 RGB)</td>
+            <td>Complex real-world scenes</td>
+            <td><span class="badge bg-primary">63.5% - 66.8%</span></td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold"><i class="bi bi-folder-check text-warning me-2"></i> RAF-DB</td>
+            <td>2017</td>
+            <td>29,672 images</td>
+            <td>100 &times; 100 RGB</td>
+            <td>Unconstrained crowdsourced</td>
+            <td><span class="badge bg-info text-dark">88.4% - 91.2%</span></td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold"><i class="bi bi-folder-check text-danger me-2"></i> CK+ (Cohn-Kanade)</td>
+            <td>2010</td>
+            <td>593 sequences</td>
+            <td>640 &times; 490 High-Res</td>
+            <td>Controlled lab lighting</td>
+            <td><span class="badge bg-success">98.5% - 99.2%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

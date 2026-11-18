@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In - FaceSense AI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-8">
+      <div class="glass-card p-4 p-md-5 shadow-lg position-relative overflow-hidden" style="border: 1px solid rgba(99, 102, 241, 0.35);">
+        <div class="glow-orb glow-orb-primary" style="top: -60px; right: -60px;"></div>
+
+        <!-- Header -->
+        <div class="text-center mb-4 position-relative">
+          <div class="brand-icon-wrapper mx-auto mb-3" style="width: 54px; height: 54px;">
+            <i class="bi bi-person-lock fs-3 text-white"></i>
+          </div>
+          <h2 class="h3 fw-bold text-white mb-1">Welcome Back</h2>
+          <p class="text-muted small">Log in to unlock real-time facial emotion detection</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show small py-2 mb-3" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Form -->
+        <form method="POST" action="{{ url_for('login') }}" class="position-relative">
+          <div class="mb-3">
+            <label for="username_or_email" class="form-label text-white small fw-bold">
+              <i class="bi bi-person-fill text-primary me-1"></i> Username or Email
+            </label>
+            <input type="text" class="form-control" id="username_or_email" name="username_or_email" 
+                   placeholder="Enter your username or email" value="{{ login_identifier or '' }}" required autofocus>
+          </div>
+
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label for="password" class="form-label text-white small fw-bold mb-0">
+                <i class="bi bi-shield-lock-fill text-primary me-1"></i> Password
+              </label>
+              <button type="button" class="btn btn-link btn-sm text-info p-0 text-decoration-none" style="font-size: 0.75rem;" onclick="togglePasswordVisibility('password', this)">
+                <i class="bi bi-eye"></i> Show
+              </button>
+            </div>
+            <input type="password" class="form-control" id="password" name="password" 
+                   placeholder="Enter your password" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary-gradient w-100 py-2 fw-bold mb-3 shadow">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Log In &amp; Unlock Camera
+          </button>
+        </form>
+
+        <!-- Footer Links -->
+        <div class="text-center pt-3 border-top border-secondary border-opacity-25 small position-relative">
+          <p class="text-muted mb-1">
+            Don't have an account yet? 
+            <a href="{{ url_for('register') }}" class="text-primary fw-bold text-decoration-none ms-1">
+              Create an Account &rarr;
+            </a>
+          </p>
+          <a href="{{ url_for('home') }}" class="text-muted text-decoration-none" style="font-size: 0.8rem;">
+            &larr; Back to Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.innerHTML = '<i class="bi bi-eye-slash"></i> Hide';
+  } else {
+    input.type = 'password';
+    btn.innerHTML = '<i class="bi bi-eye"></i> Show';
+  }
+}
+</script>
+{% endblock %}

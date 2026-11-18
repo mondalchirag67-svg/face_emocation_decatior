@@ -1,0 +1,500 @@
+{% extends 'base.html' %}
+
+{% block title %}FaceSense AI - Live Facial Emotion Detector (Powered by emotiondetector.h5){% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Auth Gate state holder for JS -->
+  <div id="detectorAuthGate" data-authenticated="{{ 'true' if current_user else 'false' }}" data-username="{{ current_user.username if current_user else '' }}"></div>
+
+  <!-- Page Header -->
+  <div class="row align-items-center mb-4">
+    <div class="col-md-7">
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+        <span class="badge badge-soft-success">
+          <i class="bi bi-check-circle-fill me-1"></i> Active Model: {{ model_info.name }}
+        </span>
+        {% if current_user %}
+          <span class="badge border py-1 px-2" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.4) !important;">
+            <i class="bi bi-unlock-fill me-1"></i> Unlocked for {{ current_user.username }}
+          </span>
+        {% else %}
+          <span class="badge border py-1 px-2" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4) !important;">
+            <i class="bi bi-lock-fill me-1"></i> Guest View &bull; Login Required to Detect
+          </span>
+        {% endif %}
+      </div>
+      <h1 class="h2 fw-bold text-white mb-1">Live Facial Emotion Detector</h1>
+      <p class="text-muted small mb-0">
+        Powered by your custom trained deep learning model <code class="text-primary fw-bold">emotiondetector.h5</code>.
+        {% if not current_user %}
+          <span class="text-warning fw-semibold"><i class="bi bi-info-circle me-1"></i> You can explore the website freely; please <a href="{{ url_for('login') }}" class="text-info text-decoration-underline" data-bs-toggle="modal" data-bs-target="#loginModal">Log In</a> or <a href="{{ url_for('register') }}" class="text-success text-decoration-underline" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a> to activate camera detection.</span>
+        {% else %}
+          <span class="text-success fw-semibold"><i class="bi bi-check2-circle me-1"></i> Camera access is unlocked for your account.</span>
+        {% endif %}
+      </p>
+    </div>
+    <div class="col-md-5 text-md-end mt-3 mt-md-0">
+      <div class="d-inline-flex flex-column align-items-md-end gap-1">
+        <div class="d-inline-flex align-items-center gap-2 p-2 rounded-3 bg-dark border border-success border-opacity-50">
+          <i class="bi bi-cpu-fill text-success fs-5"></i>
+          <div class="text-start">
+            <span class="d-block text-white fw-bold small">{{ model_info.name }}</span>
+            <span class="badge border py-0" style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.5) !important;">CNN 48&times;48 Grayscale</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PRIMARY DETECTOR VIEWPORT & EMOTION GAUGES
+       ======================================================================== -->
+  <div class="row g-4 mb-5">
+    <!-- Left Column: Video / Image Viewport & Controls -->
+    <div class="col-lg-7">
+      <div class="glass-card p-3 h-100">
+        
+        <!-- Viewport Header Toolbar -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <ul class="nav nav-pills gap-1" id="detectorTabs" role="tablist">
+            <li class="nav-item">
+              <button class="nav-link active btn-sm py-1 px-3 text-white" id="webcam-tab" data-bs-toggle="pill" data-bs-target="#webcamMode" type="button">
+                <i class="bi bi-camera-video me-1"></i> Live Webcam
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link btn-sm py-1 px-3 text-white" id="upload-tab" data-bs-toggle="pill" data-bs-target="#uploadMode" type="button">
+                <i class="bi bi-image me-1"></i> Upload Photo
+              </button>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-2">
+            <span id="cameraStatusBadge" class="badge bg-secondary text-white">Stopped</span>
+            <span id="latencyBadge" class="badge bg-dark border border-secondary text-info fw-bold">-- ms</span>
+            <span id="facesCountBadge" class="badge bg-dark border border-secondary text-light fw-bold">0 detected</span>
+          </div>
+        </div>
+
+        <!-- Video & Canvas Viewport Stage -->
+        <div class="detector-viewport-card position-relative mb-3">
+          <!-- Live Webcam Feed Container -->
+          <div id="webcamContainer" class="video-container">
+            <video id="webcamVideo" autoplay playsinline muted></video>
+            
+            <!-- Overlay Placeholder when camera is off -->
+            <div id="cameraOffPlaceholder" class="text-center p-4">
+              {% if current_user %}
+                <div class="brand-icon-wrapper mx-auto mb-3" style="width: 64px; height: 64px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);">
+                  <i class="bi bi-camera-video display-6 text-success"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-1">Camera Ready &bull; Signed in as {{ current_user.username }}</h5>
+                <p class="text-muted small mb-3">Click the green <strong>"Start Detection"</strong> button below to activate your webcam and begin emotion detection.</p>
+                <button id="quickStartBtn" class="btn btn-success btn-sm px-3">
+                  <i class="bi bi-play-circle-fill me-1"></i> Click to Start Now
+                </button>
+              {% else %}
+                <div class="brand-icon-wrapper mx-auto mb-3" style="width: 64px; height: 64px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4);">
+                  <i class="bi bi-lock-fill display-6 text-danger"></i>
+                </div>
+                <h5 class="text-white fw-bold mb-1">Camera Locked &bull; Please Register or Log In</h5>
+                <p class="text-muted small mb-3">
+                  You can explore the website freely! To activate the live webcam and start emotion detection, please log in or create an account.
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                  <a href="{{ url_for('login') }}" class="btn btn-outline-glow btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Log In
+                  </a>
+                  <a href="{{ url_for('register') }}" class="btn btn-primary-gradient btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal">
+                    <i class="bi bi-person-plus-fill me-1"></i> Register Free
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Error overlay if webcam permission denied or no camera -->
+            <div id="cameraErrorOverlay" class="text-center p-4 d-none">
+              <div class="brand-icon-wrapper mx-auto mb-3" style="width: 64px; height: 64px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4);">
+                <i class="bi bi-camera-video-off display-6 text-danger"></i>
+              </div>
+              <h5 class="text-white fw-bold mb-1">Camera Access Blocked or Not Found</h5>
+              <p class="text-muted small mb-3" id="cameraErrorMessage">
+                Your browser blocked webcam access. Please click the camera/lock icon in your browser URL bar to allow access, or test portrait photos using the "Upload Photo" tab.
+              </p>
+              <div class="d-flex justify-content-center gap-2">
+                <button id="retryCameraBtn" class="btn btn-primary-gradient btn-sm">
+                  <i class="bi bi-arrow-clockwise me-1"></i> Retry Camera
+                </button>
+                <button id="switchToUploadBtn" class="btn btn-outline-glow btn-sm">
+                  <i class="bi bi-image me-1"></i> Switch to Photo Upload
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Upload Preview Container -->
+          <div id="uploadContainer" class="video-container d-none text-center">
+            <div id="dropzoneBox" class="dropzone-box">
+              <i class="bi bi-cloud-arrow-up display-5 text-primary mb-2 d-block"></i>
+              <h6 class="text-white fw-bold mb-1">Click to Upload or Drag & Drop Portrait</h6>
+              <p class="text-muted small mb-0">Supports JPG, PNG, WEBP (Max 32MB)</p>
+              <input type="file" id="imageFileInput" class="d-none" accept="image/*">
+            </div>
+            <img id="uploadedImagePreview" class="img-fluid d-none mt-2 rounded-3" alt="Uploaded Preview">
+            
+            <div id="uploadActionButtons" class="d-none mt-3 d-flex justify-content-center gap-2">
+              <button id="detectUploadedImageBtn" class="btn btn-success btn-sm">
+                <i class="bi bi-magic me-1"></i> Detect Emotion in Image
+              </button>
+              <button id="clearImageBtn" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-trash me-1"></i> Clear Image
+              </button>
+            </div>
+          </div>
+
+          <!-- Overlay Canvas for Bounding Boxes, Labels & HUD -->
+          <canvas id="detectionCanvas"></canvas>
+        </div>
+
+        <!-- ====================================================================
+             [PRIMARY ACTION BUTTONS: START & STOP DETECTION SIDE-BY-SIDE]
+             ==================================================================== -->
+        <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-25 mb-3">
+          <div class="row align-items-center g-3">
+            <div class="col-md-7">
+              <div class="d-flex flex-wrap gap-2">
+                <!-- START BUTTON -->
+                {% if current_user %}
+                <button id="startCameraBtn" class="btn btn-success btn-lg px-4 fw-bold shadow">
+                  <i class="bi bi-play-circle-fill me-2 fs-5"></i> Start Detection
+                </button>
+                {% else %}
+                <button id="startCameraBtn" class="btn btn-warning btn-lg px-4 fw-bold shadow" data-bs-toggle="modal" data-bs-target="#loginModal" title="Registration or Login required to start camera detection">
+                  <i class="bi bi-lock-fill me-2 fs-5"></i> Start Detection (Login Required)
+                </button>
+                {% endif %}
+                
+                <!-- STOP BUTTON (SIDE-BY-SIDE) -->
+                <button id="stopCameraBtn" class="btn btn-danger btn-lg px-4 fw-bold shadow">
+                  <i class="bi bi-stop-circle-fill me-2 fs-5"></i> Stop Detection
+                </button>
+
+                <!-- SINGLE SNAPSHOT BUTTON -->
+                <button id="snapshotBtn" class="btn btn-outline-glow btn-sm d-flex align-items-center" data-bs-toggle="tooltip" title="Capture & analyze one single frame">
+                  <i class="bi bi-camera me-1"></i> Detect Once
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-5 text-md-end">
+              <!-- Live State Notification Pill -->
+              <div id="liveStatePill" class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-dark border border-secondary">
+                <span id="liveStateIndicator" class="badge rounded-circle bg-danger" style="width: 10px; height: 10px; padding: 0;"></span>
+                <span id="liveStateText" class="small text-white fw-bold">Detection Inactive</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Speed & Anti-Jitter Smoothing Controls -->
+          <div class="row g-2 align-items-center mt-2 pt-2 border-top border-secondary border-opacity-25 small">
+            <div class="col-sm-6 d-flex align-items-center gap-2">
+              <label class="text-white fw-bold mb-0 text-nowrap"><i class="bi bi-speedometer2 text-info me-1"></i> Detection Rate:</label>
+              <select id="detectionSpeedSelect" class="form-select form-select-sm bg-dark text-white border-secondary py-1" style="max-width: 185px;">
+                <option value="1500">🐢 Slower / Relaxed (1.5s)</option>
+                <option value="1000" selected>⚖️ Balanced (1.0s)</option>
+                <option value="600">⚡ Brisk (0.6s)</option>
+              </select>
+            </div>
+            <div class="col-sm-6 text-sm-end d-flex align-items-center justify-content-sm-end gap-3 mt-2 mt-sm-0">
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" id="smoothingToggle" checked>
+                <label class="form-check-label text-white small" for="smoothingToggle">Anti-Flicker Filter</label>
+              </div>
+              <span class="badge badge-soft-primary" title="Prevents spamming duplicate rows when emotion stays the same">
+                <i class="bi bi-check2-circle me-1"></i> Smart Deduplication
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Sample Images for 1-Click Testing -->
+        <div class="pt-2 border-top border-secondary border-opacity-25">
+          <label class="small text-light fw-bold mb-2 d-block">
+            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Gallery: Click any face to detect instantly:
+          </label>
+          <div class="row g-2">
+            <div class="col-sm-2 col-4">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80" 
+                   alt="Sample Happy Face" 
+                   class="img-fluid rounded-2 border border-secondary border-opacity-50 cursor-pointer sample-test-thumb"
+                   style="cursor: pointer; aspect-ratio: 1/1; object-fit: cover;"
+                   onclick="testWithSampleUrl(this.src)"
+                   data-bs-toggle="tooltip" title="Test Happy Smile">
+            </div>
+            <div class="col-sm-2 col-4">
+              <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=300&q=80" 
+                   alt="Sample Surprise Face" 
+                   class="img-fluid rounded-2 border border-secondary border-opacity-50 cursor-pointer sample-test-thumb"
+                   style="cursor: pointer; aspect-ratio: 1/1; object-fit: cover;"
+                   onclick="testWithSampleUrl(this.src)"
+                   data-bs-toggle="tooltip" title="Test Surprise Face">
+            </div>
+            <div class="col-sm-2 col-4">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80" 
+                   alt="Sample Neutral Face" 
+                   class="img-fluid rounded-2 border border-secondary border-opacity-50 cursor-pointer sample-test-thumb"
+                   style="cursor: pointer; aspect-ratio: 1/1; object-fit: cover;"
+                   onclick="testWithSampleUrl(this.src)"
+                   data-bs-toggle="tooltip" title="Test Neutral Expression">
+            </div>
+            <div class="col-sm-2 col-4">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80" 
+                   alt="Sample Sad Face" 
+                   class="img-fluid rounded-2 border border-secondary border-opacity-50 cursor-pointer sample-test-thumb"
+                   style="cursor: pointer; aspect-ratio: 1/1; object-fit: cover;"
+                   onclick="testWithSampleUrl(this.src)"
+                   data-bs-toggle="tooltip" title="Test Sad Expression">
+            </div>
+            <div class="col-sm-2 col-4">
+              <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=300&q=80" 
+                   alt="Sample Angry Face" 
+                   class="img-fluid rounded-2 border border-secondary border-opacity-50 cursor-pointer sample-test-thumb"
+                   style="cursor: pointer; aspect-ratio: 1/1; object-fit: cover;"
+                   onclick="testWithSampleUrl(this.src)"
+                   data-bs-toggle="tooltip" title="Test Intense / Angry Expression">
+            </div>
+            <div class="col-sm-2 col-4">
+              <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80" 
+                   alt="Sample Fear Face" 
+                   class="img-fluid rounded-2 border border-secondary border-opacity-50 cursor-pointer sample-test-thumb"
+                   style="cursor: pointer; aspect-ratio: 1/1; object-fit: cover;"
+                   onclick="testWithSampleUrl(this.src)"
+                   data-bs-toggle="tooltip" title="Test Fear Expression">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right Column: Live Emotion Gauges & Dominant Spotlight -->
+    <div class="col-lg-5">
+      <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <!-- Active Model Header Badge -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="text-white fw-bold mb-1">Emotion Probability Breakdown</h5>
+              <p class="text-muted small mb-0">Predicted via <code class="text-primary">{{ model_info.name }}</code></p>
+            </div>
+            <span id="activeEngineBadge" class="badge badge-soft-success small">
+              {{ model_info.name }}
+            </span>
+          </div>
+
+          <!-- Dominant Emotion Spotlight Card -->
+          <div class="p-3 rounded-3 mb-4 text-center" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--dark-card-border);">
+            <div id="dominantEmoji" class="display-3 mb-1">😐</div>
+            <h3 id="dominantEmotionText" class="fw-bold mb-0 text-white">Neutral</h3>
+            <span id="dominantConfidence" class="badge mt-1 text-white border" style="background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.25) !important;">Ready for input (Click Start Detection)</span>
+          </div>
+
+          <!-- 7 Emotion Progress Bars -->
+          <div class="emotion-meters-container">
+            {% for emotion in emotions %}
+            <div class="emotion-meter-row">
+              <div class="emotion-meter-label">
+                <span class="text-white">
+                  {{ emotion_meta[emotion].emoji }} {{ emotion }}
+                </span>
+                <span id="val-{{ emotion }}" class="text-light fw-bold">0.0%</span>
+              </div>
+              <div class="progress-track">
+                <div id="bar-{{ emotion }}" class="progress-bar-emotion" style="width: 0%; background-color: {{ emotion_meta[emotion].color }};"></div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Detection History Log -->
+        <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="text-white fw-bold mb-0 small"><i class="bi bi-clock-history me-1 text-primary"></i> Recent Inference Log</h6>
+            <div class="d-flex gap-2">
+              <button id="exportCsvBtn" class="btn btn-link btn-sm text-success p-0 text-decoration-none" style="font-size: 0.75rem;" title="Download session history as CSV">
+                <i class="bi bi-download me-1"></i> Export CSV
+              </button>
+              <button id="clearHistoryBtn" class="btn btn-link btn-sm text-info p-0 text-decoration-none" style="font-size: 0.75rem;">Clear</button>
+            </div>
+          </div>
+          <div class="table-responsive" style="max-height: 140px; overflow-y: auto;">
+            <table class="table table-dark table-sm table-borderless align-middle mb-0" style="font-size: 0.8rem;">
+              <thead>
+                <tr class="text-white border-bottom border-secondary border-opacity-50">
+                  <th class="text-white">Time</th>
+                  <th class="text-white">Emotion</th>
+                  <th class="text-white">Conf.</th>
+                  <th class="text-white">Latency</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr>
+                  <td colspan="4" class="text-center text-light py-2">Click "Start Detection" to stream live results.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MODEL SPECS & DYNAMIC UPLOADER SECTION
+       ======================================================================== -->
+  <div id="customModelSection" class="glass-card p-4 p-lg-5 mb-5" style="border: 1px solid rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.02);">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-dark border border-success border-opacity-50 mb-3">
+          <i class="bi bi-check-circle-fill text-success"></i>
+          <span class="small text-white fw-bold">Active Trained Model: {{ model_info.name }}</span>
+        </div>
+
+        <h2 class="h3 fw-bold text-white mb-2">
+          Your Trained Model is Fully Integrated!
+        </h2>
+
+        <p class="text-muted small mb-3">
+          The application has loaded your custom model <code class="text-primary fw-bold">emotiondetector.h5</code> directly into the Flask inference pipeline. When you click <strong>Start Detection</strong>, every cropped face is passed through your 4-block deep CNN.
+        </p>
+
+        <!-- Model Specs Summary -->
+        <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-25 mb-3 small">
+          <div class="row g-2">
+            <div class="col-6">
+              <span class="text-muted d-block">Model File:</span>
+              <strong class="text-white">{{ model_info.name }}</strong>
+            </div>
+            <div class="col-6">
+              <span class="text-muted d-block">Input Dimensions:</span>
+              <strong class="text-info">48 &times; 48 &times; 1 (Grayscale)</strong>
+            </div>
+            <div class="col-6">
+              <span class="text-muted d-block">Architecture:</span>
+              <strong class="text-white">4 Conv Blocks + Dense Head</strong>
+            </div>
+            <div class="col-6">
+              <span class="text-muted d-block">Output Classes:</span>
+              <strong class="text-success">7 Universal Emotions</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional: Upload another model to swap weights -->
+        <label class="form-label text-white fw-bold small mb-1">
+          <i class="bi bi-arrow-repeat me-1 text-primary"></i> Swap or Update Model File (.h5 / .keras)
+        </label>
+        <div class="input-group input-group-sm">
+          <input type="file" class="form-control bg-dark text-light border-secondary" id="modelFileInput" accept=".h5,.keras">
+          <button class="btn btn-primary-gradient" type="button" id="uploadModelBtn">
+            <i class="bi bi-upload me-1"></i> Swap Model
+          </button>
+        </div>
+        <div id="modelUploadAlert" class="d-none mt-2"></div>
+      </div>
+
+      <!-- Right Column: Model Code Architecture -->
+      <div class="col-lg-6">
+        <div class="code-window shadow-lg">
+          <div class="code-header">
+            <div class="code-dots">
+              <span class="code-dot dot-red"></span>
+              <span class="code-dot dot-yellow"></span>
+              <span class="code-dot dot-green"></span>
+            </div>
+            <span class="small text-muted">app.py &bull; emotiondetector.h5 Loader</span>
+            <button class="btn btn-sm btn-outline-glow py-0 px-2 btn-copy-code" data-target="modelIntegrationSnippet">
+              <i class="bi bi-clipboard"></i> Copy
+            </button>
+          </div>
+          <pre class="code-content mb-0" id="modelIntegrationSnippet"><code><span class="text-muted"># -------------------------------------------------------------</span>
+<span class="text-muted"># USER MODEL: emotiondetector.h5 ACTIVATED IN APP.PY</span>
+<span class="text-muted"># -------------------------------------------------------------</span>
+<span class="text-primary">from</span> tensorflow.keras.models <span class="text-primary">import</span> load_model
+
+CUSTOM_MODEL_PATH = <span class="text-warning">"emotiondetector.h5"</span>
+
+<span class="text-muted"># Model loads automatically at startup:</span>
+CUSTOM_MODEL = load_model(CUSTOM_MODEL_PATH, compile=<span class="text-primary">False</span>)
+<span class="text-info">print</span>(<span class="text-warning">"Active Model:"</span>, CUSTOM_MODEL_NAME) <span class="text-muted"># emotiondetector.h5</span>
+<span class="text-info">print</span>(<span class="text-warning">"Input Shape:"</span>, CUSTOM_MODEL.input_shape) <span class="text-muted"># (None, 48, 48, 1)</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/detector.js') }}"></script>
+<script>
+// Helper function for quick testing sample images from gallery
+function testWithSampleUrl(imgUrl) {
+  const authGate = document.getElementById('detectorAuthGate');
+  if (authGate && authGate.dataset.authenticated !== 'true') {
+    const loginModalEl = document.getElementById('loginModal');
+    if (loginModalEl && window.bootstrap) {
+      const modal = window.bootstrap.Modal.getOrCreateInstance(loginModalEl);
+      modal.show();
+    } else {
+      window.location.href = '/login?next=/detector';
+    }
+    return;
+  }
+
+  const uploadTab = document.getElementById('upload-tab');
+  if (uploadTab) uploadTab.click();
+
+  const preview = document.getElementById('uploadedImagePreview');
+  preview.crossOrigin = "anonymous";
+  preview.src = imgUrl;
+  preview.classList.remove('d-none');
+
+  const actionButtons = document.getElementById('uploadActionButtons');
+  if (actionButtons) actionButtons.classList.remove('d-none');
+
+  fetch(imgUrl)
+    .then(res => res.blob())
+    .then(blob => {
+      const file = new File([blob], "sample.jpg", { type: "image/jpeg" });
+      const formData = new FormData();
+      formData.append('file', file);
+      return fetch('/api/predict', { method: 'POST', body: formData });
+    })
+    .then(res => {
+      if (res.status === 401) {
+        const loginModalEl = document.getElementById('loginModal');
+        if (loginModalEl && window.bootstrap) {
+          window.bootstrap.Modal.getOrCreateInstance(loginModalEl).show();
+        }
+        throw new Error('Unauthorized');
+      }
+      return res.json();
+    })
+    .then(data => {
+      const canvas = document.getElementById('detectionCanvas');
+      canvas.width = preview.naturalWidth || 400;
+      canvas.height = preview.naturalHeight || 400;
+      if (window.handlePredictionResponse) {
+        window.handlePredictionResponse(data, preview);
+      }
+    })
+    .catch(err => {
+      console.warn('Sample test preview notice:', err);
+    });
+}
+</script>
+{% endblock %}

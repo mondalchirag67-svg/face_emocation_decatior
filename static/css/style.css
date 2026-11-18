@@ -1,0 +1,601 @@
+/* ==========================================================================
+   FaceSense AI - Modern Master Stylesheet
+   High Contrast & Enhanced Readability on Dark Backgrounds
+   ========================================================================== */
+
+:root {
+  --primary: #818cf8;          /* Bright vivid indigo */
+  --primary-hover: #6366f1;
+  --primary-rgb: 129, 140, 248;
+  --secondary: #38bdf8;        /* Bright sky cyan */
+  --accent: #a855f7;           /* Bright purple */
+  --dark-bg: #090d16;
+  --dark-card: #111827;
+  --dark-card-border: rgba(255, 255, 255, 0.12);
+  --dark-card-hover: rgba(255, 255, 255, 0.20);
+  
+  /* High-Contrast Text Palette for Dark UI */
+  --text-main: #ffffff;        /* Crisp white primary text */
+  --text-muted: #cbd5e1;       /* Light slate secondary text (80% luminance, high contrast) */
+  --text-dim: #94a3b8;         /* Medium slate tertiary text */
+  
+  /* High-Contrast Emotion Specific Colors */
+  --color-angry: #f87171;      /* Bright coral red */
+  --color-disgust: #34d399;    /* Bright emerald green */
+  --color-fear: #c084fc;       /* Bright lavender purple */
+  --color-happy: #fbbf24;      /* Bright amber gold */
+  --color-neutral: #94a3b8;    /* Balanced slate */
+  --color-sad: #60a5fa;        /* Bright sky blue */
+  --color-surprise: #f472b6;   /* Bright rose pink */
+}
+
+/* Base resets & typography */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-font {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   HIGH-CONTRAST TYPOGRAPHY & BOOTSTRAP OVERRIDES (CRITICAL FIX)
+   Ensures text color NEVER blends into dark background!
+   ========================================================================== */
+
+/* Overrides Bootstrap's dark-gray #6c757d text-muted with high-contrast light slate */
+.text-muted, small.text-muted, p.text-muted, span.text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Overrides Bootstrap's dark-blue #0d6efd with bright readable indigo */
+.text-primary {
+  color: #818cf8 !important;
+}
+
+/* Overrides Bootstrap's dark-gray #6c757d with bright readable slate */
+.text-secondary {
+  color: #cbd5e1 !important;
+}
+
+/* Overrides Bootstrap's dark-green with bright readable emerald */
+.text-success {
+  color: #34d399 !important;
+}
+
+/* Overrides Bootstrap's dark-cyan with bright readable cyan */
+.text-info {
+  color: #38bdf8 !important;
+}
+
+/* Overrides Bootstrap's dark-yellow with bright readable amber */
+.text-warning {
+  color: #fbbf24 !important;
+}
+
+/* Overrides Bootstrap's dark-red with bright readable coral */
+.text-danger {
+  color: #f87171 !important;
+}
+
+/* Radiant High-Contrast Gradient Text */
+.text-gradient {
+  background: linear-gradient(135deg, #a5b4fc 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #818cf8; /* Fallback for older browsers */
+  font-weight: 800;
+}
+
+/* Inline Code Elements - High Contrast Cyan on dark bubble */
+code {
+  background: rgba(255, 255, 255, 0.10);
+  color: #38bdf8 !important;
+  padding: 0.2rem 0.45rem;
+  border-radius: 5px;
+  font-size: 0.88em;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   Navbar Styling
+   -------------------------------------------------------------------------- */
+.navbar-custom {
+  background: rgba(9, 13, 22, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--dark-card-border);
+  padding: 0.85rem 0;
+  transition: all 0.3s ease;
+}
+
+.navbar-custom .navbar-brand {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-icon-wrapper {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #6366f1, #0ea5e9);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+}
+
+.navbar-custom .nav-link {
+  color: #cbd5e1;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.navbar-custom .nav-link.active {
+  color: #a5b4fc;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons & Badges
+   -------------------------------------------------------------------------- */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  transition: all 0.25s ease;
+}
+
+.btn-primary-gradient:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.btn-outline-glow {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+
+.btn-outline-glow:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.badge-soft {
+  padding: 0.35rem 0.75rem;
+  border-radius: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.badge-soft-primary {
+  background: rgba(99, 102, 241, 0.20);
+  color: #c7d2fe;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
+.badge-soft-success {
+  background: rgba(16, 185, 129, 0.20);
+  color: #a7f3d0;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.badge-soft-warning {
+  background: rgba(245, 158, 11, 0.20);
+  color: #fde68a;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Cards & Surfaces
+   -------------------------------------------------------------------------- */
+.glass-card {
+  background: var(--dark-card);
+  border: 1px solid var(--dark-card-border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  transition: all 0.3s ease;
+  color: var(--text-main);
+}
+
+.glass-card:hover {
+  border-color: var(--dark-card-hover);
+}
+
+.glass-card-interactive:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.glass-hero-gradient {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.30), transparent 70%);
+}
+
+/* Glow Orb Background Accents */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.glow-orb-primary {
+  width: 400px;
+  height: 400px;
+  background: rgba(99, 102, 241, 0.18);
+  top: 10%;
+  left: -5%;
+}
+
+.glow-orb-secondary {
+  width: 350px;
+  height: 350px;
+  background: rgba(14, 165, 233, 0.15);
+  top: 40%;
+  right: -5%;
+}
+
+/* --------------------------------------------------------------------------
+   Image Showcase Cards
+   -------------------------------------------------------------------------- */
+.realistic-img-container {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: #1e293b;
+}
+
+.realistic-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.realistic-img-container:hover img {
+  transform: scale(1.05);
+}
+
+.img-overlay-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* --------------------------------------------------------------------------
+   Emotion Bar Meters
+   -------------------------------------------------------------------------- */
+.emotion-meter-row {
+  margin-bottom: 0.85rem;
+}
+
+.emotion-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: #ffffff;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-emotion {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.4s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Detector Specific Styling (Webcam / Canvas / Bounding Box)
+   -------------------------------------------------------------------------- */
+.detector-viewport-card {
+  position: relative;
+  background: #020617;
+  border: 1px solid var(--dark-card-border);
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+#webcamVideo,
+#uploadedImagePreview {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  background: #000000;
+}
+
+#detectionCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.dropzone-box {
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dropzone-box:hover,
+.dropzone-box.drag-over {
+  border-color: #818cf8;
+  background: rgba(99, 102, 241, 0.10);
+}
+
+.model-plug-zone {
+  border: 2px dashed rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.04);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+/* ==========================================================================
+   FORM CONTROLS & DROPDOWNS (SELECT & FILE INPUT VISIBILITY FIX)
+   ========================================================================== */
+
+/* Dropdown Select & Option Visibility Fix */
+select, .form-select {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
+}
+
+select:focus, .form-select:focus {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 0.25rem rgba(129, 140, 248, 0.25) !important;
+}
+
+/* Windows Chrome / Edge Option Dropdown Colors */
+select option, .form-select option {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  padding: 8px 12px;
+}
+
+/* File Input Chooser Button & Text */
+.form-control {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+}
+
+.form-control:focus {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 0.25rem rgba(129, 140, 248, 0.25) !important;
+}
+
+.form-control::file-selector-button {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  margin-right: 0.85rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.form-control::file-selector-button:hover {
+  background-color: #475569 !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   TABLES & DATA GRIDS (HIGH CONTRAST ROW & CELL READABILITY)
+   ========================================================================== */
+.table-dark {
+  --bs-table-bg: transparent !important;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.03) !important;
+  --bs-table-active-bg: rgba(255, 255, 255, 0.08) !important;
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.06) !important;
+  color: #f1f5f9 !important;
+}
+
+.table-dark th {
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.table-dark td {
+  color: #e2e8f0 !important;
+}
+
+.table-dark tbody tr:hover td {
+  color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   Code Snippet Styling - Enhanced Syntax Contrast
+   -------------------------------------------------------------------------- */
+.code-window {
+  background: #0b0f19;
+  border: 1px solid var(--dark-card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.88rem;
+}
+
+.code-header {
+  background: #111827;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--dark-card-border);
+}
+
+.code-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.code-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot-red { background: #ef4444; }
+.dot-yellow { background: #f59e0b; }
+.dot-green { background: #10b981; }
+
+.code-content {
+  padding: 1.25rem;
+  overflow-x: auto;
+  color: #f8fafc;
+  line-height: 1.55;
+}
+
+/* Code Syntax Token Colors (Vivid & Clear on dark) */
+.code-content .text-muted {
+  color: #94a3b8 !important; /* Visible slate comments */
+}
+.code-content .text-primary {
+  color: #93c5fd !important; /* Keyword light blue */
+  font-weight: 600;
+}
+.code-content .text-info {
+  color: #67e8f9 !important; /* Function calls cyan */
+}
+.code-content .text-warning {
+  color: #fde047 !important; /* Strings bright yellow */
+}
+.code-content .text-success {
+  color: #4ade80 !important; /* Boolean/Success bright green */
+}
+
+/* --------------------------------------------------------------------------
+   Alerts - Dark Glassmorphism Styling
+   -------------------------------------------------------------------------- */
+.alert-success {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+
+.alert-danger {
+  background: rgba(239, 68, 68, 0.18) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+}
+
+.alert-warning {
+  background: rgba(245, 158, 11, 0.18) !important;
+  color: #fde68a !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Footer Styling
+   -------------------------------------------------------------------------- */
+footer {
+  margin-top: auto;
+  background: #070a12;
+  border-top: 1px solid var(--dark-card-border);
+  padding: 3rem 0 1.5rem 0;
+  color: #cbd5e1;
+}
+
+footer a {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: #ffffff;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.pulse-active {
+  animation: pulseGlow 2s infinite;
+}

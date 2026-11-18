@@ -1,0 +1,404 @@
+{% extends 'base.html' %}
+
+{% block title %}FaceSense AI - Deep Learning Model Blueprint & Training Guide{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Page Header -->
+  <div class="row align-items-center mb-5">
+    <div class="col-lg-8">
+      <span class="badge badge-soft-primary mb-2"><i class="bi bi-cpu me-1"></i> Developer &amp; Data Science Handbook</span>
+      <h1 class="display-6 fw-bold text-white mb-2">Deep Learning Architecture &amp; Training Blueprint</h1>
+      <p class="text-muted lead mb-0">
+        A step-by-step engineering guide to constructing, training, and exporting your own Convolutional Neural Network (CNN) for Facial Emotion Recognition.
+      </p>
+    </div>
+    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+      <a href="{{ url_for('detector') }}#customModelSection" class="btn btn-primary-gradient">
+        <i class="bi bi-cloud-upload me-1"></i> Upload Model to Live Sandbox
+      </a>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       TOP SECTION: ARCHITECTURE OVERVIEW & REALISTIC AI IMAGERY
+       ======================================================================== -->
+  <div class="row g-4 mb-5 align-items-center">
+    <div class="col-lg-7">
+      <div class="glass-card p-4 h-100">
+        <h3 class="h4 fw-bold text-white mb-3">
+          <i class="bi bi-diagram-3-fill text-primary me-2"></i> How CNNs Learn Emotional Action Units
+        </h3>
+        <p class="text-muted">
+          Unlike traditional computer vision that relied on hand-crafted Gabor filters or SIFT descriptors, Convolutional Neural Networks (CNNs) automatically learn hierarchical spatial representations directly from raw pixel matrices:
+        </p>
+        <ul class="text-muted small d-flex flex-column gap-2 mb-3">
+          <li>
+            <strong class="text-white">Early Layers (Layers 1-2):</strong> Filter kernels learn localized primitives like edge orientations, skin luminance gradients, and contrast boundaries.
+          </li>
+          <li>
+            <strong class="text-white">Mid-Level Layers (Layers 3-4):</strong> Assemble edges into anatomical motifs—eyebrow curvatures, nasolabial folds, pupil apertures, and lip corners.
+          </li>
+          <li>
+            <strong class="text-white">Deep Layers &amp; Dense Head:</strong> Combine motifs into global relational patterns that correspond to FACS Action Units, producing a 7-dimensional probability vector via Softmax.
+          </li>
+        </ul>
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge badge-soft-success"><i class="bi bi-check-circle me-1"></i> End-to-End Trainable</span>
+          <span class="badge badge-soft-primary"><i class="bi bi-lightning me-1"></i> 48x48 Grayscale Optimized</span>
+          <span class="badge badge-soft-warning"><i class="bi bi-shield-check me-1"></i> Dropout Regularized</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="glass-card p-2">
+        <div class="realistic-img-container" style="aspect-ratio: 16/11;">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" alt="Deep Neural Network code and matrix visualization">
+          <div class="img-overlay-caption">
+            <div>
+              <span class="badge bg-primary mb-1">TensorFlow / Keras 3.x</span>
+              <p class="text-white small mb-0">Input: (Batch, 48, 48, 1) &rarr; Output: (Batch, 7)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       LAYER-BY-LAYER PIPELINE DIAGRAM CARDS
+       ======================================================================== -->
+  <div class="mb-5">
+    <div class="text-center mb-4">
+      <span class="badge badge-soft-warning mb-2">Layer Breakdown</span>
+      <h2 class="display-6 fw-bold text-white">The Mini-VGG Architecture for Emotion Detection</h2>
+      <p class="text-muted mx-auto" style="max-width: 650px;">
+        Optimized specifically for the FER-2013 dataset: compact footprint (~1.3M parameters), rapid CPU inference (&lt;25ms), and high resistance to overfitting.
+      </p>
+    </div>
+
+    <div class="row g-3">
+      <!-- Block 1 -->
+      <div class="col-md-3 col-sm-6">
+        <div class="glass-card p-3 h-100 border-primary border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-primary">Block 1</span>
+            <small class="text-muted">Shape: 48 &times; 48</small>
+          </div>
+          <h6 class="text-white fw-bold mb-2">Low-Level Feature Block</h6>
+          <ul class="text-muted small ps-3 mb-0">
+            <li>Conv2D (32 filters, 3&times;3)</li>
+            <li>BatchNormalization</li>
+            <li>Conv2D (32 filters, 3&times;3)</li>
+            <li>MaxPooling2D (2&times;2 pool)</li>
+            <li>Dropout (0.25)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Block 2 -->
+      <div class="col-md-3 col-sm-6">
+        <div class="glass-card p-3 h-100 border-info border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-info text-dark">Block 2</span>
+            <small class="text-muted">Shape: 24 &times; 24</small>
+          </div>
+          <h6 class="text-white fw-bold mb-2">Mid-Level Motifs Block</h6>
+          <ul class="text-muted small ps-3 mb-0">
+            <li>Conv2D (64 filters, 3&times;3)</li>
+            <li>BatchNormalization</li>
+            <li>Conv2D (64 filters, 3&times;3)</li>
+            <li>MaxPooling2D (2&times;2 pool)</li>
+            <li>Dropout (0.25)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Block 3 -->
+      <div class="col-md-3 col-sm-6">
+        <div class="glass-card p-3 h-100 border-warning border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-warning text-dark">Block 3</span>
+            <small class="text-muted">Shape: 12 &times; 12</small>
+          </div>
+          <h6 class="text-white fw-bold mb-2">High-Level Action Units</h6>
+          <ul class="text-muted small ps-3 mb-0">
+            <li>Conv2D (128 filters, 3&times;3)</li>
+            <li>BatchNormalization</li>
+            <li>MaxPooling2D (2&times;2 pool)</li>
+            <li>Dropout (0.25)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Block 4 -->
+      <div class="col-md-3 col-sm-6">
+        <div class="glass-card p-3 h-100 border-success border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-success">Dense Head</span>
+            <small class="text-muted">Output: 7 Probs</small>
+          </div>
+          <h6 class="text-white fw-bold mb-2">Classification Head</h6>
+          <ul class="text-muted small ps-3 mb-0">
+            <li>Flatten (4,608 vector)</li>
+            <li>Dense (256 units + ReLU)</li>
+            <li>BatchNormalization</li>
+            <li>Dropout (0.50 rate)</li>
+            <li><strong class="text-success">Dense(7, Softmax)</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       READY-TO-USE PYTHON TRAINING CODE
+       ======================================================================== -->
+  <div class="glass-card p-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h3 class="h4 fw-bold text-white mb-1"><i class="bi bi-terminal me-2 text-primary"></i> Complete Python Training Script (train.py)</h3>
+        <p class="text-muted small mb-0">Clean, simple, copy-pasteable script to train and save your own <code class="text-primary">.h5</code> model file.</p>
+      </div>
+      <button class="btn btn-outline-glow btn-sm btn-copy-code" data-target="pythonTrainingCode">
+        <i class="bi bi-clipboard me-1"></i> Copy Code
+      </button>
+    </div>
+
+    <div class="code-window">
+      <div class="code-header">
+        <div class="code-dots">
+          <span class="code-dot dot-red"></span>
+          <span class="code-dot dot-yellow"></span>
+          <span class="code-dot dot-green"></span>
+        </div>
+        <span class="small text-muted">train_emotion_model.py</span>
+        <span class="badge bg-dark border text-muted">Python 3.11</span>
+      </div>
+      <pre class="code-content mb-0" id="pythonTrainingCode"><code><span class="text-muted"># =============================================================================</span>
+<span class="text-muted"># 1. IMPORT REQUIRED LIBRARIES</span>
+<span class="text-muted"># =============================================================================</span>
+<span class="text-primary">import</span> os
+<span class="text-primary">import</span> numpy <span class="text-primary">as</span> np
+<span class="text-primary">from</span> tensorflow.keras.models <span class="text-primary">import</span> Sequential
+<span class="text-primary">from</span> tensorflow.keras.layers <span class="text-primary">import</span> Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
+<span class="text-primary">from</span> tensorflow.keras.optimizers <span class="text-primary">import</span> Adam
+<span class="text-primary">from</span> tensorflow.keras.preprocessing.image <span class="text-primary">import</span> ImageDataGenerator
+<span class="text-primary">from</span> tensorflow.keras.callbacks <span class="text-primary">import</span> ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+
+<span class="text-muted"># 7 Target Emotion Classes</span>
+EMOTIONS = [<span class="text-warning">'Angry'</span>, <span class="text-warning">'Disgust'</span>, <span class="text-warning">'Fear'</span>, <span class="text-warning">'Happy'</span>, <span class="text-warning">'Neutral'</span>, <span class="text-warning">'Sad'</span>, <span class="text-warning">'Surprise'</span>]
+
+<span class="text-muted"># =============================================================================</span>
+<span class="text-muted"># 2. DEFINE THE CNN ARCHITECTURE</span>
+<span class="text-muted"># =============================================================================</span>
+<span class="text-primary">def</span> <span class="text-info">build_emotion_cnn</span>(input_shape=(48, 48, 1), num_classes=7):
+    model = Sequential([
+        <span class="text-muted"># Block 1</span>
+        Conv2D(32, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>, input_shape=input_shape),
+        BatchNormalization(),
+        Conv2D(32, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
+        BatchNormalization(),
+        MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.25),
+
+        <span class="text-muted"># Block 2</span>
+        Conv2D(64, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
+        BatchNormalization(),
+        Conv2D(64, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
+        BatchNormalization(),
+        MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.25),
+
+        <span class="text-muted"># Block 3</span>
+        Conv2D(128, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
+        BatchNormalization(),
+        MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.25),
+
+        <span class="text-muted"># Fully Connected Classification Head</span>
+        Flatten(),
+        Dense(256, activation=<span class="text-warning">'relu'</span>),
+        BatchNormalization(),
+        Dropout(0.5),
+        Dense(num_classes, activation=<span class="text-warning">'softmax'</span>)
+    ])
+    
+    model.compile(
+        optimizer=Adam(learning_rate=0.001),
+        loss=<span class="text-warning">'categorical_crossentropy'</span>,
+        metrics=[<span class="text-warning">'accuracy'</span>]
+    )
+    <span class="text-primary">return</span> model
+
+<span class="text-muted"># =============================================================================</span>
+<span class="text-muted"># 3. DATA AUGMENTATION &amp; TRAINING PIPELINE</span>
+<span class="text-muted"># =============================================================================</span>
+<span class="text-primary">if</span> __name__ == <span class="text-warning">'__main__'</span>:
+    <span class="text-info">print</span>(<span class="text-warning">"Building Emotion CNN Model..."</span>)
+    model = build_emotion_cnn()
+    model.summary()
+
+    <span class="text-muted"># Data augmentation generator for training</span>
+    train_datagen = ImageDataGenerator(
+        rescale=1.0 / 255.0,
+        rotation_range=15,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        shear_range=0.1,
+        zoom_range=0.1,
+        horizontal_flip=<span class="text-primary">True</span>,
+        fill_mode=<span class="text-warning">'nearest'</span>
+    )
+
+    <span class="text-muted"># Set directories where your dataset is extracted:</span>
+    <span class="text-muted"># Directory structure: data/train/happy/, data/train/sad/, etc.</span>
+    TRAIN_DIR = <span class="text-warning">"data/train"</span>
+    VAL_DIR = <span class="text-warning">"data/test"</span>
+
+    <span class="text-primary">if</span> os.path.exists(TRAIN_DIR):
+        train_generator = train_datagen.flow_from_directory(
+            TRAIN_DIR,
+            target_size=(48, 48),
+            color_mode=<span class="text-warning">'grayscale'</span>,
+            batch_size=64,
+            class_mode=<span class="text-warning">'categorical'</span>
+        )
+
+        <span class="text-muted"># Save best model to uploads/models/ folder directly!</span>
+        save_path = <span class="text-warning">"uploads/models/my_emotion_model.h5"</span>
+        checkpoint = ModelCheckpoint(save_path, monitor=<span class="text-warning">'val_accuracy'</span>, save_best_only=<span class="text-primary">True</span>, verbose=1)
+        lr_reducer = ReduceLROnPlateau(monitor=<span class="text-warning">'val_loss'</span>, factor=0.5, patience=3, min_lr=1e-6, verbose=1)
+        early_stop = EarlyStopping(monitor=<span class="text-warning">'val_loss'</span>, patience=8, restore_best_weights=<span class="text-primary">True</span>)
+
+        <span class="text-info">print</span>(<span class="text-warning">"Starting model training for 30 epochs..."</span>)
+        model.fit(
+            train_generator,
+            epochs=30,
+            callbacks=[checkpoint, lr_reducer, early_stop]
+        )
+        <span class="text-info">print</span>(f<span class="text-warning">"🎉 Model trained and saved to {save_path}!"</span>)
+    <span class="text-primary">else</span>:
+        <span class="text-info">print</span>(<span class="text-warning">"[INFO] Dataset folder not found. Please provide the path to your FER-2013 data directory."</span>)</code></pre>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       HOW TO PLUG YOUR MODEL INTO THIS APP (STEP-BY-STEP)
+       ======================================================================== -->
+  <div class="glass-card p-4 p-lg-5 mb-5" style="border: 1px solid rgba(16, 185, 129, 0.3);">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <span class="badge badge-soft-success mb-2"><i class="bi bi-plug me-1"></i> Seamless Integration</span>
+        <h3 class="h4 fw-bold text-white mb-3">Connecting Your Model File in 30 Seconds</h3>
+        <p class="text-muted small">
+          We built this web application with a modular, pluggable architecture. You can connect your trained weights using either of these two methods:
+        </p>
+
+        <div class="d-flex flex-column gap-3 mt-3">
+          <div class="d-flex gap-3 align-items-start">
+            <div class="brand-icon-wrapper flex-shrink-0" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4);">
+              <span class="text-success fw-bold">A</span>
+            </div>
+            <div>
+              <h6 class="text-white fw-bold mb-1">Web UI Upload (Instant)</h6>
+              <p class="text-muted small mb-0">Navigate to the <a href="{{ url_for('detector') }}#customModelSection" class="text-primary">Live Detector Page</a>, click <em>Select Trained Model File</em>, pick your <code class="text-light">.h5</code> file, and click upload. The server swaps the model immediately in memory!</p>
+            </div>
+          </div>
+
+          <div class="d-flex gap-3 align-items-start">
+            <div class="brand-icon-wrapper flex-shrink-0" style="background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(99, 102, 241, 0.4);">
+              <span class="text-primary fw-bold">B</span>
+            </div>
+            <div>
+              <h6 class="text-white fw-bold mb-1">Direct Folder Placement</h6>
+              <p class="text-muted small mb-0">Copy your model file directly into <code class="text-light">uploads/models/your_model.h5</code> and restart the Flask app with <code class="text-light">python app.py</code>. The application automatically detects and loads it on boot!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="p-4 rounded-3 bg-dark border border-secondary border-opacity-25">
+          <h6 class="text-white fw-bold mb-3"><i class="bi bi-gear-wide-connected text-primary me-2"></i> Model Specifications Checklist</h6>
+          
+          <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25 small">
+            <span class="text-muted">File Format</span>
+            <span class="text-white fw-bold"><code class="text-info">.h5</code> or <code class="text-info">.keras</code></span>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25 small">
+            <span class="text-muted">Input Dimensions</span>
+            <span class="text-white fw-bold">48 &times; 48 &times; 1 (Grayscale) or 224 &times; 224 &times; 3</span>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25 small">
+            <span class="text-muted">Pixel Normalization</span>
+            <span class="text-white fw-bold"><code>x / 255.0</code> (Floating point [0, 1])</span>
+          </div>
+          <div class="d-flex justify-content-between py-2 border-bottom border-secondary border-opacity-25 small">
+            <span class="text-muted">Output Layer</span>
+            <span class="text-white fw-bold">Dense(7, activation='softmax')</span>
+          </div>
+          <div class="d-flex justify-content-between py-2 small">
+            <span class="text-muted">Target Classes Order</span>
+            <span class="text-white fw-bold">Angry, Disgust, Fear, Happy, Neutral, Sad, Surprise</span>
+          </div>
+
+          <a href="{{ url_for('detector') }}" class="btn btn-primary-gradient w-100 mt-3">
+            <i class="bi bi-camera-video me-1"></i> Open Live Detector
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       HYPERPARAMETER TUNING CHEAT SHEET
+       ======================================================================== -->
+  <div class="glass-card p-4 mb-4">
+    <h3 class="h4 fw-bold text-white mb-3"><i class="bi bi-sliders me-2 text-warning"></i> Hyperparameter Tuning &amp; Optimization Cheatsheet</h3>
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0" style="font-size: 0.9rem;">
+        <thead class="border-bottom border-secondary border-opacity-25 text-white">
+          <tr>
+            <th>Parameter</th>
+            <th>Recommended Value</th>
+            <th>Rationale &amp; Impact on Emotion Detection</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-white fw-bold">Batch Size</td>
+            <td><code class="text-primary">64</code></td>
+            <td>Provides balanced gradient estimates while fitting comfortably into 4GB+ GPU VRAM.</td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold">Initial Learning Rate</td>
+            <td><code class="text-primary">1e-3 (0.001)</code> with Adam</td>
+            <td>Swift convergence on early conv filters; decaying by 50% on plateaus prevents oscillation.</td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold">Dropout Rates</td>
+            <td><code class="text-primary">0.25</code> (Conv) &bull; <code class="text-primary">0.50</code> (Dense)</td>
+            <td>Crucial for FER-2013 to stop the network from memorizing individual face identities.</td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold">Class Weights</td>
+            <td>Inverse frequency weighting</td>
+            <td>Disgust only accounts for ~1.5% of FER-2013 samples. Weighting prevents disgust starvation.</td>
+          </tr>
+          <tr>
+            <td class="text-white fw-bold">Face Alignment Padding</td>
+            <td><code class="text-primary">8% - 10%</code> border expansion</td>
+            <td>Ensures chin and forehead landmarks are not clipped by aggressive face detectors.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
