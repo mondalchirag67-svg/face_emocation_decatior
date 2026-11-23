@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}FaceSense AI - Deep Learning Model Blueprint & Training Guide{% endblock %}
+{% block title %}FaceSense AI - Deep Learning Model Architecture & Blueprint{% endblock %}
 
 {% block content %}
 <div class="container py-4">
   <!-- Page Header -->
   <div class="row align-items-center mb-5">
     <div class="col-lg-8">
-      <span class="badge badge-soft-primary mb-2"><i class="bi bi-cpu me-1"></i> Developer &amp; Data Science Handbook</span>
-      <h1 class="display-6 fw-bold text-white mb-2">Deep Learning Architecture &amp; Training Blueprint</h1>
+      <span class="badge badge-soft-primary mb-2"><i class="bi bi-cpu me-1"></i> Deep Learning Architecture</span>
+      <h1 class="display-6 fw-bold text-white mb-2">Deep Learning Architecture &amp; Blueprint</h1>
       <p class="text-muted lead mb-0">
-        A step-by-step engineering guide to constructing, training, and exporting your own Convolutional Neural Network (CNN) for Facial Emotion Recognition.
+        An engineering guide to understanding the Convolutional Neural Network (CNN) structure, spatial feature representations, and model integration for Facial Emotion Recognition.
       </p>
     </div>
     <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
@@ -154,137 +154,7 @@
   </div>
 
 
-  <!-- ========================================================================
-       READY-TO-USE PYTHON TRAINING CODE
-       ======================================================================== -->
-  <div class="glass-card p-4 mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <h3 class="h4 fw-bold text-white mb-1"><i class="bi bi-terminal me-2 text-primary"></i> Complete Python Training Script (train.py)</h3>
-        <p class="text-muted small mb-0">Clean, simple, copy-pasteable script to train and save your own <code class="text-primary">.h5</code> model file.</p>
-      </div>
-      <button class="btn btn-outline-glow btn-sm btn-copy-code" data-target="pythonTrainingCode">
-        <i class="bi bi-clipboard me-1"></i> Copy Code
-      </button>
-    </div>
 
-    <div class="code-window">
-      <div class="code-header">
-        <div class="code-dots">
-          <span class="code-dot dot-red"></span>
-          <span class="code-dot dot-yellow"></span>
-          <span class="code-dot dot-green"></span>
-        </div>
-        <span class="small text-muted">train_emotion_model.py</span>
-        <span class="badge bg-dark border text-muted">Python 3.11</span>
-      </div>
-      <pre class="code-content mb-0" id="pythonTrainingCode"><code><span class="text-muted"># =============================================================================</span>
-<span class="text-muted"># 1. IMPORT REQUIRED LIBRARIES</span>
-<span class="text-muted"># =============================================================================</span>
-<span class="text-primary">import</span> os
-<span class="text-primary">import</span> numpy <span class="text-primary">as</span> np
-<span class="text-primary">from</span> tensorflow.keras.models <span class="text-primary">import</span> Sequential
-<span class="text-primary">from</span> tensorflow.keras.layers <span class="text-primary">import</span> Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
-<span class="text-primary">from</span> tensorflow.keras.optimizers <span class="text-primary">import</span> Adam
-<span class="text-primary">from</span> tensorflow.keras.preprocessing.image <span class="text-primary">import</span> ImageDataGenerator
-<span class="text-primary">from</span> tensorflow.keras.callbacks <span class="text-primary">import</span> ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
-
-<span class="text-muted"># 7 Target Emotion Classes</span>
-EMOTIONS = [<span class="text-warning">'Angry'</span>, <span class="text-warning">'Disgust'</span>, <span class="text-warning">'Fear'</span>, <span class="text-warning">'Happy'</span>, <span class="text-warning">'Neutral'</span>, <span class="text-warning">'Sad'</span>, <span class="text-warning">'Surprise'</span>]
-
-<span class="text-muted"># =============================================================================</span>
-<span class="text-muted"># 2. DEFINE THE CNN ARCHITECTURE</span>
-<span class="text-muted"># =============================================================================</span>
-<span class="text-primary">def</span> <span class="text-info">build_emotion_cnn</span>(input_shape=(48, 48, 1), num_classes=7):
-    model = Sequential([
-        <span class="text-muted"># Block 1</span>
-        Conv2D(32, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>, input_shape=input_shape),
-        BatchNormalization(),
-        Conv2D(32, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
-        BatchNormalization(),
-        MaxPooling2D(pool_size=(2, 2)),
-        Dropout(0.25),
-
-        <span class="text-muted"># Block 2</span>
-        Conv2D(64, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
-        BatchNormalization(),
-        Conv2D(64, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
-        BatchNormalization(),
-        MaxPooling2D(pool_size=(2, 2)),
-        Dropout(0.25),
-
-        <span class="text-muted"># Block 3</span>
-        Conv2D(128, (3, 3), activation=<span class="text-warning">'relu'</span>, padding=<span class="text-warning">'same'</span>),
-        BatchNormalization(),
-        MaxPooling2D(pool_size=(2, 2)),
-        Dropout(0.25),
-
-        <span class="text-muted"># Fully Connected Classification Head</span>
-        Flatten(),
-        Dense(256, activation=<span class="text-warning">'relu'</span>),
-        BatchNormalization(),
-        Dropout(0.5),
-        Dense(num_classes, activation=<span class="text-warning">'softmax'</span>)
-    ])
-    
-    model.compile(
-        optimizer=Adam(learning_rate=0.001),
-        loss=<span class="text-warning">'categorical_crossentropy'</span>,
-        metrics=[<span class="text-warning">'accuracy'</span>]
-    )
-    <span class="text-primary">return</span> model
-
-<span class="text-muted"># =============================================================================</span>
-<span class="text-muted"># 3. DATA AUGMENTATION &amp; TRAINING PIPELINE</span>
-<span class="text-muted"># =============================================================================</span>
-<span class="text-primary">if</span> __name__ == <span class="text-warning">'__main__'</span>:
-    <span class="text-info">print</span>(<span class="text-warning">"Building Emotion CNN Model..."</span>)
-    model = build_emotion_cnn()
-    model.summary()
-
-    <span class="text-muted"># Data augmentation generator for training</span>
-    train_datagen = ImageDataGenerator(
-        rescale=1.0 / 255.0,
-        rotation_range=15,
-        width_shift_range=0.1,
-        height_shift_range=0.1,
-        shear_range=0.1,
-        zoom_range=0.1,
-        horizontal_flip=<span class="text-primary">True</span>,
-        fill_mode=<span class="text-warning">'nearest'</span>
-    )
-
-    <span class="text-muted"># Set directories where your dataset is extracted:</span>
-    <span class="text-muted"># Directory structure: data/train/happy/, data/train/sad/, etc.</span>
-    TRAIN_DIR = <span class="text-warning">"data/train"</span>
-    VAL_DIR = <span class="text-warning">"data/test"</span>
-
-    <span class="text-primary">if</span> os.path.exists(TRAIN_DIR):
-        train_generator = train_datagen.flow_from_directory(
-            TRAIN_DIR,
-            target_size=(48, 48),
-            color_mode=<span class="text-warning">'grayscale'</span>,
-            batch_size=64,
-            class_mode=<span class="text-warning">'categorical'</span>
-        )
-
-        <span class="text-muted"># Save best model to uploads/models/ folder directly!</span>
-        save_path = <span class="text-warning">"uploads/models/my_emotion_model.h5"</span>
-        checkpoint = ModelCheckpoint(save_path, monitor=<span class="text-warning">'val_accuracy'</span>, save_best_only=<span class="text-primary">True</span>, verbose=1)
-        lr_reducer = ReduceLROnPlateau(monitor=<span class="text-warning">'val_loss'</span>, factor=0.5, patience=3, min_lr=1e-6, verbose=1)
-        early_stop = EarlyStopping(monitor=<span class="text-warning">'val_loss'</span>, patience=8, restore_best_weights=<span class="text-primary">True</span>)
-
-        <span class="text-info">print</span>(<span class="text-warning">"Starting model training for 30 epochs..."</span>)
-        model.fit(
-            train_generator,
-            epochs=30,
-            callbacks=[checkpoint, lr_reducer, early_stop]
-        )
-        <span class="text-info">print</span>(f<span class="text-warning">"🎉 Model trained and saved to {save_path}!"</span>)
-    <span class="text-primary">else</span>:
-        <span class="text-info">print</span>(<span class="text-warning">"[INFO] Dataset folder not found. Please provide the path to your FER-2013 data directory."</span>)</code></pre>
-    </div>
-  </div>
 
 
   <!-- ========================================================================

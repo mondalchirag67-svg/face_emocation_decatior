@@ -18,7 +18,7 @@ An end-to-end, full-stack web application for real-time **Facial Emotion Recogni
 | **1. Home Overview** | `/` | Comprehensive overview, interactive FACS Affect showcase, 7 universal emotion cards with realistic photography, 4-stage engineering pipeline, and real-world AI use cases. |
 | **2. Live Detector & Sandbox** | `/detector` | Real-time dual-mode detector (Webcam + Photo Upload) featuring prominent **Start Detection** and **Stop Detection** controls, 7 probability meters, anti-flicker smoothing, model swapper, and CSV export. |
 | **3. Emotion Science & FACS** | `/emotions` | Scientific handbook based on Dr. Paul Ekman's Facial Action Coding System (FACS), Action Units (AU1, AU4, AU6, AU12), muscle anatomy, and benchmark datasets (FER-2013, AffectNet, CK+). |
-| **4. Model Architecture Blueprint** | `/model-guide` | Complete engineering blueprint of the Mini-VGG CNN architecture, copy-paste training pipeline code, hyperparameter tables, and export checklist. |
+| **4. Model Architecture Blueprint** | `/model-guide` | Complete engineering blueprint of the Mini-VGG CNN architecture, layer-by-layer spatial feature mapping, hyperparameter tables, and model integration checklist. |
 
 ---
 
@@ -107,7 +107,7 @@ face_emocation_decatior/
 │   ├── index.html             # Page 1: Home Overview & Emotional Galleries
 │   ├── detector.html          # Page 2: Live Detector & Pluggable Sandbox
 │   ├── emotions.html          # Page 3: Emotion Psychology & FACS Science Guide
-│   ├── model_guide.html       # Page 4: Deep Learning Architecture & Training Code
+│   ├── model_guide.html       # Page 4: Deep Learning Architecture & Model Blueprint
 │   ├── login.html             # Dedicated high-contrast Sign-In page
 │   ├── register.html          # Dedicated Registration page
 │   └── error.html             # Branded 404/500/413 error templates

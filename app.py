@@ -1,15 +1,4 @@
-"""
-=============================================================================
-FaceSense AI - Facial Emotion Detection Web Application
-=============================================================================
-Framework: Python Flask
-Active Model: emotiondetector.h5 (User's Trained CNN Model)
-Authentication: Built-in User Registration & Login with SQLite & Werkzeug
-Description: Full-stack web server for real-time facial emotion recognition.
-             Requires user registration & login before activating the camera
-             or detecting facial emotions.
-=============================================================================
-"""
+
 
 import os
 import io
